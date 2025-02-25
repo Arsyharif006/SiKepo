@@ -102,27 +102,30 @@ function Settings() {
           <h2 className="text-lg font-semibold text-gray-600 mb-4">Atur Saldo</h2>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Saldo Saat Ini (Rp)</label>
-            <div className="flex space-x-2">
-              <input
-                type="number"
-                className="flex-1 p-2 border rounded-lg"
-                value={balance}
-                onChange={handleBalanceChange}
-                placeholder="Contoh: 500000"
-              />
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center"
-                onClick={updateBalance}
-              >
-                <FiSave className="mr-1" /> Simpan
-              </button>
-            </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Catatan: Mengubah saldo secara manual tidak akan mempengaruhi riwayat transaksi
-            </p>
-          </div>
-        </div>
+  <label className="block text-gray-700 mb-2">Saldo Saat Ini (Rp)</label>
+  
+  {/* Layout responsif yang diperbaiki */}
+  <div className="flex flex-col sm:flex-row gap-2">
+    <input
+      type="number"
+      className="w-full p-2 border rounded-lg"
+      value={balance}
+      onChange={handleBalanceChange}
+      placeholder="Contoh: 500000"
+    />
+    <button
+      className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center justify-center"
+      onClick={updateBalance}
+    >
+      <FiSave className="mr-1" /> Simpan
+    </button>
+  </div>
+  
+  <p className="text-xs text-gray-500 mt-1">
+    Catatan: Mengubah saldo secara manual tidak akan mempengaruhi riwayat transaksi
+  </p>
+</div>
+</div>
         
         {/* Background Settings - IMPROVED */}
         <div className="bg-white rounded-lg shadow-md p-4 mb-4">
