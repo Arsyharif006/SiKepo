@@ -1,5 +1,5 @@
 // components/TransactionForm.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiX } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { NumericFormat } from 'react-number-format';
@@ -7,6 +7,23 @@ import { NumericFormat } from 'react-number-format';
 function TransactionForm({ type, onClose, onSubmit, currentBalance }) {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
+  const [formattedDate, setFormattedDate] = useState('');
+  const [formattedTime, setFormattedTime] = useState('');
+  
+  // Inisialisasi tanggal dan waktu saat komponen dimuat
+  useEffect(() => {
+    updateDateTime();
+  }, []);
+  
+  // Fungsi untuk memperbarui tanggal dan waktu
+  const updateDateTime = () => {
+    const now = new Date();
+    
+    // Format untuk tampilan di form
+    const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    setFormattedDate(now.toLocaleDateString('id-ID', dateOptions));
+    setFormattedTime(now.toTimeString().split(' ')[0].substring(0, 5));
+  };
   
   // Handler untuk NumericFormat
   const handleAmountValueChange = (values) => {
@@ -33,14 +50,26 @@ function TransactionForm({ type, onClose, onSubmit, currentBalance }) {
       return;
     }
     
-    // Siapkan data transaksi
+    // Siapkan data transaksi dengan tanggal yang benar
     const now = new Date();
+    
+    // Format tanggal YYYY-MM-DD menggunakan tanggal lokal yang benar
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const currentDate = `${year}-${month}-${day}`;
+    
+    // Format waktu HH:MM
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const currentTime = `${hours}:${minutes}`;
+    
     const transaction = {
       type,
       amount: parseFloat(amount),
       description,
-      date: now.toISOString().split('T')[0],
-      time: now.toTimeString().split(' ')[0].substring(0, 5),
+      date: currentDate,
+      time: currentTime,
       timestamp: now.getTime()
     };
     
@@ -55,6 +84,9 @@ function TransactionForm({ type, onClose, onSubmit, currentBalance }) {
     const transactions = JSON.parse(localStorage.getItem('expense-tracker-transactions') || '[]');
     transactions.push(transaction);
     localStorage.setItem('expense-tracker-transactions', JSON.stringify(transactions));
+    
+    // Log untuk debugging
+    console.log('Transaksi disimpan:', transaction);
     
     // Panggil callback
     onSubmit();
@@ -104,10 +136,12 @@ function TransactionForm({ type, onClose, onSubmit, currentBalance }) {
             <input
               type="text"
               className="w-full p-2 border rounded-lg bg-gray-100"
-              value={`${new Date().toLocaleDateString('id-ID')} ${new Date().toTimeString().split(' ')[0].substring(0, 5)}`}
+              value={`${formattedDate} ${formattedTime}`}
               disabled
             />
-            <p className="text-xs text-gray-500 mt-1">Tanggal dan waktu diambil secara otomatis</p>
+            <p className="text-xs text-gray-500 mt-1">
+              Tanggal dan waktu saat ini: {formattedDate} {formattedTime}
+            </p>
           </div>
           
           <button
