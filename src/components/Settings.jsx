@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiSave, FiImage, FiAlertCircle, FiTrash2 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import { NumericFormat } from 'react-number-format';
 
 function Settings() {
   const [balance, setBalance] = useState(0);
@@ -26,10 +27,10 @@ function Settings() {
       reader.readAsDataURL(file);
     }
   };
-
   const removeBackground = () => {
     localStorage.removeItem('expense-tracker-bg');
     setBackground('');
+
     window.dispatchEvent(new Event("storage")); // Memicu perubahan
     toast.success('Background dihapus');
   };
@@ -42,8 +43,10 @@ function Settings() {
     }
   }, []);
 
-  const handleBalanceChange = (e) => {
-    setBalance(e.target.value);
+  // Handler untuk NumericFormat
+  const handleBalanceValueChange = (values) => {
+    // values.floatValue berisi nilai numerik tanpa formatting
+    setBalance(values.floatValue || 0);
   };
 
   const updateBalance = () => {
@@ -55,7 +58,7 @@ function Settings() {
     localStorage.setItem('expense-tracker-balance', balance.toString());
     toast.success('Saldo berhasil diperbarui');
   };
-
+  
   const clearAllData = () => {
     if (confirm('Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.')) {
       localStorage.setItem('expense-tracker-balance', '0');
@@ -99,33 +102,34 @@ function Settings() {
 
         {/* Saldo Settings */}
         <div className="bg-white rounded-lg shadow-md p-4 mb-4">
-          <h2 className="text-lg font-semibold text-gray-600 mb-4">Atur Saldo</h2>
+        <h2 className="text-lg font-semibold text-gray-600 mb-4">Atur Saldo</h2>
 
-          <div className="mb-4">
-  <label className="block text-gray-700 mb-2">Saldo Saat Ini (Rp)</label>
-  
-  {/* Layout responsif yang diperbaiki */}
-  <div className="flex flex-col sm:flex-row gap-2">
-    <input
-      type="number"
-      className="w-full p-2 border rounded-lg"
-      value={balance}
-      onChange={handleBalanceChange}
-      placeholder="Contoh: 500000"
-    />
-    <button
-      className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center justify-center"
-      onClick={updateBalance}
-    >
-      <FiSave className="mr-1" /> Simpan
-    </button>
-  </div>
-  
-  <p className="text-xs text-gray-500 mt-1">
-    Catatan: Mengubah saldo secara manual tidak akan mempengaruhi riwayat transaksi
-  </p>
-</div>
-</div>
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2">Saldo Saat Ini (Rp)</label>
+          
+          <div className="flex flex-col sm:flex-row gap-2">
+            <NumericFormat
+              thousandSeparator="."
+              decimalSeparator=","
+              prefix="Rp "
+              value={balance}
+              onValueChange={handleBalanceValueChange}
+              className="w-full p-2 border rounded-lg"
+              placeholder="Contoh: Rp 500.000"
+            />
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center justify-center"
+              onClick={updateBalance}
+            >
+              <FiSave className="mr-1" /> Simpan
+            </button>
+          </div>
+          
+          <p className="text-xs text-gray-500 mt-1">
+            Catatan: Mengubah saldo secara manual tidak akan mempengaruhi riwayat transaksi
+          </p>
+        </div>
+      </div>
         
         {/* Background Settings - IMPROVED */}
         <div className="bg-white rounded-lg shadow-md p-4 mb-4">

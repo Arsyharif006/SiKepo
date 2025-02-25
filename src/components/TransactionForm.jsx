@@ -2,10 +2,17 @@
 import React, { useState } from 'react';
 import { FiX } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import { NumericFormat } from 'react-number-format';
 
 function TransactionForm({ type, onClose, onSubmit, currentBalance }) {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
+  
+  // Handler untuk NumericFormat
+  const handleAmountValueChange = (values) => {
+    // values.floatValue berisi nilai numerik tanpa formatting
+    setAmount(values.floatValue || '');
+  };
   
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -68,12 +75,14 @@ function TransactionForm({ type, onClose, onSubmit, currentBalance }) {
         <form onSubmit={handleSubmit} className="p-4">
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Jumlah (Rp)</label>
-            <input
-              type="number"
-              className="w-full p-2 border rounded-lg"
+            <NumericFormat
+              thousandSeparator="."
+              decimalSeparator=","
+              prefix="Rp "
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="Contoh: 50000"
+              onValueChange={handleAmountValueChange}
+              className="w-full p-2 border rounded-lg"
+              placeholder="Contoh: Rp 50.000"
               required
             />
           </div>
