@@ -38,8 +38,11 @@ function Dashboard() {
   };
 
   return (
+    <>
+      <div className="bg-white p-4 mb-6 text-center">
+        <h1 className="text-2xl font-bold">Pengelolaan Keuangan</h1>
+      </div>
     <div className="container mx-auto px-4 py-6 pb-20">
-      <h1 className="text-2xl font-bold mb-6 text-center">Pengelolaan Keuangan</h1>
       
       {/* Balance Card */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -116,6 +119,7 @@ function Dashboard() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

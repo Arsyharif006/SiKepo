@@ -326,8 +326,11 @@ function Reports() {
     const balance = totalIncome - totalExpense;
 
     return (
+        <>
+              <div className="bg-white p-4 mb-6 text-center">
+        <h1 className="text-2xl font-bold">Laporan Keuangan</h1>
+      </div>
         <div className="container mx-auto px-4 py-6 pb-20">
-            <h1 className="text-2xl font-bold mb-6 text-center">Laporan Keuangan</h1>
 
             {/* Month Selector */}
             <div className="bg-white rounded-lg shadow-md p-4 mb-4">
@@ -468,6 +471,7 @@ function Reports() {
                 </div>
             </div>
         </div>
+        </>
     );
 
     // Fungsi untuk mendapatkan ringkasan bulanan

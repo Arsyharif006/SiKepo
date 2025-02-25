@@ -100,8 +100,11 @@ function Transactions() {
     .reduce((sum, t) => sum + t.amount, 0);
 
   return (
+    <>
+    <div className="bg-white p-4 mb-6 text-center">
+        <h1 className="text-2xl font-bold">Riwayat Transaksi</h1>
+      </div>
     <div className="container mx-auto px-4 py-6 pb-20">
-      <h1 className="text-2xl font-bold mb-6 text-center">Riwayat Transaksi</h1>
       
       {/* Filter Bar */}
       <div className="bg-white rounded-lg shadow-md p-4 mb-4">
@@ -198,6 +201,7 @@ function Transactions() {
         )}
       </div>
     </div>
+</>
   );
 }
 
