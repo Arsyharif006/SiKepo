@@ -151,7 +151,7 @@ function Settings() {
                 className="bg-red-500 text-white px-4 py-2 rounded-lg flex items-center"
                 onClick={removeBackground}
               >
-                <FiTrash2 className="mr-1" /> Hapus Background
+                <FiTrash2 className="mr-1" /> Hapus
               </button>
             )}
           </div>

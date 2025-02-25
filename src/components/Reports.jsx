@@ -516,29 +516,34 @@ function Reports() {
         }).slice(0, 6); // Ambil 6 bulan terakhir saja
     }
 
-    // Fungsi untuk menghitung saldo total berdasarkan bulan sebelumnya
-    function calculateRunningBalance(currentMonth) {
-        // Get all months sorted chronologically (earliest first)
-        const allMonths = getMonthlySummary().sort((a, b) => {
-            if (a.year !== b.year) return a.year - b.year;
-            return a.month - b.month;
-        });
-
-        let runningBalance = 0;
-
-        // Add up all transactions up to and including the current month
-        for (const month of allMonths) {
-            const monthBalance = month.income - month.expense;
-            runningBalance += monthBalance;
-
-            // If this is the month we're calculating for, return the running balance
-            if (month.monthName === currentMonth.monthName && month.year === currentMonth.year) {
-                break;
-            }
-        }
-
-        return runningBalance;
+   // Modify the calculateRunningBalance function
+function calculateRunningBalance(currentMonth) {
+    // Get the base total balance from localStorage
+    const savedTotalBalance = parseFloat(localStorage.getItem('expense-tracker-balance') || '0');
+    
+    // Get all months sorted chronologically (earliest first)
+    const allMonths = getMonthlySummary().sort((a, b) => {
+        if (a.year !== b.year) return a.year - b.year;
+        return a.month - b.month;
+    });
+    
+    // Find the index of our target month
+    const currentMonthIndex = allMonths.findIndex(month => 
+        month.monthName === currentMonth.monthName && month.year === currentMonth.year
+    );
+    
+    // Get future months (those that come after our target month)
+    const futureMonths = allMonths.slice(currentMonthIndex + 1);
+    
+    // Calculate adjustments for future months (we need to subtract these from the current total)
+    let futureAdjustments = 0;
+    for (const month of futureMonths) {
+        futureAdjustments += (month.income - month.expense);
     }
+    
+    // Return the totalBalance minus future adjustments
+    return savedTotalBalance - futureAdjustments;
+}
 }
 
 export default Reports;
