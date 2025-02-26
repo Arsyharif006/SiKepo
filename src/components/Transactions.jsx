@@ -473,7 +473,7 @@ function Transactions() {
                     transition={{ duration: 0.3, delay: 0.05 * index }}
                   >
                     <div className="flex-1">
-                      <p className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-300'} transition-colors duration-300`}>{transaction.description}</p>
+                      <p className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-600'} transition-colors duration-300`}>{transaction.description}</p>
                       <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'} transition-colors duration-300`}>{transaction.time}</p>
                     </div>
                     <div className="flex items-center">
