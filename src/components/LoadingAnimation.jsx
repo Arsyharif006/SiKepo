@@ -81,7 +81,7 @@ const LoadingAnimation = ({ isLoading }) => {
             padding: '0 10px'
           }}
         >
-          Memuat Keuangan Anda...
+         SiKepo (Keuangan & Pengeluaran Online)...
         </motion.p>
       </div>
     </div>

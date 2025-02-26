@@ -144,18 +144,14 @@ function Settings() {
 
   return (
     <>
-      <motion.div 
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.3 }}
-        className={`${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'} p-4 mb-6 shadow-md transition-colors duration-300`}
+      <div className={`${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'} p-4 mb-6 shadow-md transition-colors duration-300`}
       >
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Pengaturan</h1>
           <div className="flex items-center space-x-3">
           </div>
         </div>
-      </motion.div>
+      </div>
 
       <motion.div 
         className="container mx-auto px-4 py-6 pb-20"
