@@ -1,18 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { FiSave, FiImage, FiAlertCircle, FiTrash2 } from 'react-icons/fi';
+import { FiSave, FiImage, FiAlertCircle, FiTrash2, FiMoon, FiSun } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { NumericFormat } from 'react-number-format';
+import { motion } from 'framer-motion';
 
 function Settings() {
   const [balance, setBalance] = useState(0);
   const [background, setBackground] = useState(localStorage.getItem('expense-tracker-bg') || '');
+  const [darkMode, setDarkMode] = useState(localStorage.getItem('expense-tracker-dark-mode') === 'true');
 
   useEffect(() => {
     const savedBackground = localStorage.getItem('expense-tracker-bg');
     if (savedBackground) {
       setBackground(savedBackground);
     }
+
+    // Load dark mode setting
+    const savedDarkMode = localStorage.getItem('expense-tracker-dark-mode');
+    if (savedDarkMode !== null) {
+      setDarkMode(savedDarkMode === 'true');
+    }
   }, []);
+
+  // Update the document with dark mode class
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
+  const toggleDarkMode = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    localStorage.setItem('expense-tracker-dark-mode', newDarkMode.toString());
+    window.dispatchEvent(new Event("storage")); // Trigger change event
+  };
 
   const handleBackgroundChange = (event) => {
     const file = event.target.files[0];
@@ -27,6 +51,7 @@ function Settings() {
       reader.readAsDataURL(file);
     }
   };
+  
   const removeBackground = () => {
     localStorage.removeItem('expense-tracker-bg');
     setBackground('');
@@ -93,50 +118,121 @@ function Settings() {
     toast.success('Data berhasil diekspor');
   };
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 12
+      }
+    }
+  };
+
   return (
     <>
-      <div className="bg-white p-4 mb-6 text-center">
-        <h1 className="text-2xl font-bold">Pengaturan</h1>
-      </div>
-      <div className="container mx-auto px-4 py-6 pb-20">
-
-        {/* Saldo Settings */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-4">
-        <h2 className="text-lg font-semibold text-gray-600 mb-4">Atur Saldo</h2>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Saldo Saat Ini (Rp)</label>
-          
-          <div className="flex flex-col sm:flex-row gap-2">
-            <NumericFormat
-              thousandSeparator="."
-              decimalSeparator=","
-              prefix="Rp "
-              value={balance}
-              onValueChange={handleBalanceValueChange}
-              className="w-full p-2 border rounded-lg"
-              placeholder="Contoh: Rp 500.000"
-            />
-            <button
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center justify-center"
-              onClick={updateBalance}
-            >
-              <FiSave className="mr-1" /> Simpan
-            </button>
+      <motion.div 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className={`${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'} p-4 mb-6 shadow-md transition-colors duration-300`}
+      >
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold">Pengaturan</h1>
+          <div className="flex items-center space-x-3">
           </div>
-          
-          <p className="text-xs text-gray-500 mt-1">
-            Catatan: Mengubah saldo secara manual tidak akan mempengaruhi riwayat transaksi
-          </p>
         </div>
-      </div>
+      </motion.div>
+
+      <motion.div 
+        className="container mx-auto px-4 py-6 pb-20"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         
-        {/* Background Settings - IMPROVED */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-4">
-          <h2 className="text-lg font-semibold text-gray-600 mb-4">Ubah Background</h2>
+        {/* Saldo Settings */}
+        <motion.div 
+          variants={itemVariants}
+          className={`${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} rounded-lg shadow-md p-4 mb-4 transition-colors duration-300`}
+        >
+          <h2 className={`text-lg font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-600'} mb-4`}>Atur Saldo</h2>
+
+          <div className="mb-4">
+            <label className={`block ${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Saldo Saat Ini (Rp)</label>
+            
+            <div className="flex flex-col sm:flex-row gap-2">
+              <NumericFormat
+                thousandSeparator="."
+                decimalSeparator=","
+                prefix="Rp "
+                value={balance}
+                onValueChange={handleBalanceValueChange}
+                className={`w-full p-2 border rounded-lg ${darkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-800 border-gray-300'}`}
+                placeholder="Contoh: Rp 500.000"
+              />
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center justify-center"
+                onClick={updateBalance}
+              >
+                <FiSave className="mr-1" /> Simpan
+              </button>
+            </div>
+            
+            <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
+              Catatan: Mengubah saldo secara manual tidak akan mempengaruhi riwayat transaksi
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Dark Mode Toggle */}
+        <motion.div 
+          variants={itemVariants}
+          className={`${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} rounded-lg shadow-md p-4 mb-4 transition-colors duration-300`}
+        >
+          <h2 className={`text-lg font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-600'} mb-4`}>Mode Tampilan</h2>
+          
+          <div className="flex items-center justify-between">
+            <span>Mode {darkMode ? 'Gelap' : 'Terang'}</span>
+            
+            <motion.button 
+              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.1 }}
+              className={`rounded-full p-2 ${darkMode ? 'bg-gray-700 text-yellow-300' : 'bg-blue-500 text-white'} transition-colors duration-300`}
+              onClick={toggleDarkMode}
+              aria-label={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {darkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
+            </motion.button>
+          </div>
+        </motion.div>
+        
+        {/* Background Settings */}
+        <motion.div 
+          variants={itemVariants}
+          className={`${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} rounded-lg shadow-md p-4 mb-4 transition-colors duration-300`}
+        >
+          <h2 className={`text-lg font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-600'} mb-4`}>Ubah Background</h2>
 
           <div className="flex space-x-2">
-            <label className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center cursor-pointer">
+            <motion.label 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center cursor-pointer"
+            >
               <FiImage className="mr-1" /> Pilih Gambar
               <input 
                 type="file" 
@@ -144,68 +240,85 @@ function Settings() {
                 onChange={handleBackgroundChange} 
                 className="hidden" 
               />
-            </label>
+            </motion.label>
 
             {background && (
-              <button 
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 className="bg-red-500 text-white px-4 py-2 rounded-lg flex items-center"
                 onClick={removeBackground}
               >
                 <FiTrash2 className="mr-1" /> Hapus
-              </button>
+              </motion.button>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Data Management */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-4">
-          <h2 className="text-lg font-semibold text-gray-600 mb-4">Kelola Data</h2>
+        <motion.div 
+          variants={itemVariants}
+          className={`${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} rounded-lg shadow-md p-4 mb-4 transition-colors duration-300`}
+        >
+          <h2 className={`text-lg font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-600'} mb-4`}>Kelola Data</h2>
 
           <div className="space-y-4">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               className="w-full bg-green-500 text-white px-4 py-3 rounded-lg flex items-center justify-center"
               onClick={exportAllData}
             >
               <FiSave className="mr-2" /> Ekspor Semua Data
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               className="w-full bg-red-500 text-white px-4 py-3 rounded-lg flex items-center justify-center"
               onClick={clearAllData}
             >
               <FiTrash2 className="mr-2" /> Hapus Semua Data
-            </button>
+            </motion.button>
 
-            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              transition={{ duration: 0.3 }}
+              className={`${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-yellow-50 border-yellow-400'} border-l-4 p-4 rounded transition-colors duration-300`}
+            >
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <FiAlertCircle className="h-5 w-5 text-yellow-400" />
+                  <FiAlertCircle className={`h-5 w-5 ${darkMode ? 'text-yellow-300' : 'text-yellow-400'}`} />
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm text-yellow-700">
+                  <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-yellow-700'}`}>
                     Data disimpan di browser Anda. Menghapus cache browser atau menggunakan perangkat lain akan menghilangkan data.
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
         {/* About */}
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h2 className="text-lg font-semibold text-gray-600 mb-4">Tentang Aplikasi</h2>
+        <motion.div 
+          variants={itemVariants}
+          className={`${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} rounded-lg shadow-md p-4 transition-colors duration-300`}
+        >
+          <h2 className={`text-lg font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-600'} mb-4`}>Tentang Aplikasi</h2>
 
-          <p className="text-gray-600 mb-2">
-            Aplikasi Pencatat Pengeluaran adalah alat sederhana untuk membantu Anda melacak keuangan pribadi.
+          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} mb-2`}>
+            Aplikasi Pencatat Keuangan Online adalah alat sederhana untuk membantu Anda melacak pemasukan dan pengeluaran pribadi.
           </p>
-          <p className="text-gray-600 mb-2">
+          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} mb-2`}>
             Data disimpan secara lokal di browser Anda dan tidak dikirim ke server manapun.
           </p>
-          <p className="text-gray-600">
-            Versi 1.0.0
+          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            Versi 3.1.0
           </p>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </>
   );
 }

@@ -1,3 +1,5 @@
+
+
 // components/TransactionForm.jsx
 import React, { useState, useEffect } from 'react';
 import { FiX } from 'react-icons/fi';
@@ -70,7 +72,7 @@ function TransactionForm({ type, onClose, onSubmit, currentBalance }) {
       description,
       date: currentDate,
       time: currentTime,
-      timestamp: now.getTime()
+      timestamp: now.getTime() // Add timestamp for better sorting
     };
     
     // Update localStorage
@@ -80,9 +82,10 @@ function TransactionForm({ type, onClose, onSubmit, currentBalance }) {
       : currentBalance + parseFloat(amount);
     localStorage.setItem('expense-tracker-balance', newBalance.toString());
     
-    // 2. Simpan transaksi
+    // 2. Simpan transaksi - changed to prepend new transaction
     const transactions = JSON.parse(localStorage.getItem('expense-tracker-transactions') || '[]');
-    transactions.push(transaction);
+    // Add new transaction at the beginning to ensure newest appears first
+    transactions.unshift(transaction);
     localStorage.setItem('expense-tracker-transactions', JSON.stringify(transactions));
     
     // Log untuk debugging
